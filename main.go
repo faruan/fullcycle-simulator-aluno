@@ -1,6 +1,19 @@
 package main
 
-import route2 "github.com/faruan/application/route"
+import (
+	"fmt"
+	"log"
+
+	route2 "github.com/faruan/fullcycle-simulator-aluno/application/route"
+	"github.com/joho/godotenv"
+)
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("error loading .env file")
+	}
+}
 
 func main() {
 	route := route2.Route{
