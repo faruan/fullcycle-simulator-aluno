@@ -19,22 +19,22 @@ func NewKafkaConsumer(msgChan chan *ckafka.Message) *KafkaConsumer {
 }
 
 func (k *KafkaConsumer) Consume() {
-	configMap :=&ckafka.ConfigMap{
+	configMap := &ckafka.ConfigMap{
 		"bootstrap.servers": os.Getenv("KafkaBootstrapServers"),
-		"group.id": os.Getenv("KafkaConsumerGroupId"),
+		"group.id":          os.Getenv("KafkaConsumerGroupId"),
 	}
 	c, err := ckafka.NewConsumer(configMap)
-		if err != nil{
-			log.Fatalf("error consuming kafka consumer:" + err.Error())
+	if err != nil {
+		log.Fatalf("error consuming kafka message:" + err.Error())
+	}
+	topics := []string{os.Getenv("KafkaReadTopic")}
+	c.SubscribeTopics(topics, nil)
+	fmt.Println("Kafka consumer has been started")
+	for {
+		msg, err := c.ReadMessage(-1)
+		if err == nil {
+			k.MsgChan <- msg
 		}
-		topics := []string{os.Getenv("KafkaReadTopic")}
-		c.SubscribeToTopics(topics, nil)
-		fmt.Println("kafka consumer has been started")
-		for {
-			msg, err := c.ReadMessage(-1)
-			if err == nil{
-				k.MsgChan <- msg
-			}
-		}
+	}
 }
 
